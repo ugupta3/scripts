@@ -2,9 +2,14 @@ import requests
 import json
 import urllib
 
+from Instruments import InstrumentsProvider
+
+
+instp = InstrumentsProvider()
+
 KITE_HOST = 'https://kite3.zerodha.com/api/'
 
-KITE_CHART_API_HOST='https://kitecharts.zerodha.com/api/chart/'
+KITE_CHART_API_HOST = 'https://kitecharts.zerodha.com/api/chart/'
 
 ORDERS_API = KITE_HOST + "orders"
 
@@ -50,14 +55,20 @@ def place_order(tradingsymbol,
                 client_id="PS9155"):
     payload = locals();
     print(payload)
-    r = requests.session().post(ORDERS_API+"/"+variety, headers=headers, data=payload)
+    r = requests.session().post(ORDERS_API + "/" + variety, headers=headers, data=payload)
     print(r.json())
 
 
-def getHistory():
-    return
+def history(instrument_token, fromDate, to, interval):
+    history_api = KITE_CHART_API_HOST + instrument_token + "/" +\
+                  interval + "minute?public_token=c9cc6bbd65f59e8c6e31c1d376858a9f" \
+                  "&user_id=PS9155&api_key=kitefront&access_token=6uvdvb2x3k4jupnb2n90je1v55s89f69" \
+                  "&from="+fromDate+"&to="+to+"&ciqrandom=1520045946198"
 
-#holdings()
-#orders()
-#positions()
-place_order("SBIN","BUY","1","261")
+    result =requests.get(history_api);
+    print(result.json())
+
+
+token = instp.get_instrument_token(tradingsymbol="SBIN")
+print(token)
+history(token,'2018-02-27','2018-02-28','5')
